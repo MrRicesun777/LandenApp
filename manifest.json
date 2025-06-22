@@ -1,0 +1,31 @@
+{
+  "theme_color": "#8936FF",
+  "background_color": "#2EC6FE",
+  "icons": [
+    {
+      "purpose": "maskable",
+      "sizes": "192x192",
+      "src": "/CountryApp/android-chrome-192x192.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "/CountryApp/android-chrome-512x512.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "180x180",
+      "src": "/CountryApp/apple-touch-icon.png",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "any",
+  "display": "standalone",
+  "dir": "auto",
+  "lang": "nl",
+  "name": "Country App",
+  "short_name": "CA",
+  "start_url": "/CountryApp/"
+}

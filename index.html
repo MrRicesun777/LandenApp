@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <!-- Vereiste meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Landen app overzicht">
+    <meta name="msapplication-TileColor" content="#55b4da">
+    <meta name="theme-color" content="#55b4da">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="manifest" href="/CountryApp/manifest.json">
+
+
+
+    <title>Country App</title>
+
+    <!-- Material.io bestanden (CSS & Font/icons)-->
+    <!-- Uitleg werking componenents: https://material.io/components?platform=web -->
+    <!-- Demo van components:         https://material-components.github.io/material-components-web-catalog/#/ -->
+    <!-- Demo en uitleg icons:        https://fonts.google.com/icons?selected=Material+Icons -->
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <script>
+        window.addEventListener("load", () => {
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("service-worker.js");
+            }
+        });
+    </script>
+
+    <!-- Material.io bestanden (JS en registratie componenten) -->
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script>const MDCBanner = mdc.banner.MDCBanner; const MDCCheckbox = mdc.checkbox.MDCCheckbox; const MDCChip = mdc.chips.MDCChip; const MDCChipSet = mdc.chips.MDCChipSet; const MDCCircularProgress = mdc.circularProgress.MDCCircularProgress; const MDCDataTable = mdc.dataTable.MDCDataTable; const MDCDialog = mdc.dialog.MDCDialog; const MDCDrawer = mdc.drawer.MDCDrawer; const MDCFloatingLabel = mdc.floatingLabel.MDCFloatingLabel; const MDCFormField = mdc.formField.MDCFormField; const MDCIconButtonToggle = mdc.iconButton.MDCIconButtonToggle; const MDCLineRipple = mdc.lineRipple.MDCLineRipple; const MDCLinearProgress = mdc.linearProgress.MDCLinearProgress; const MDCList = mdc.list.MDCList; const MDCMenu = mdc.menu.MDCMenu; const MDCMenuSurface = mdc.menuSurface.MDCMenuSurface; const MDCNotchedOutline = mdc.notchedOutline.MDCNotchedOutline; const MDCRadio = mdc.radio.MDCRadio; const MDCRipple = mdc.ripple.MDCRipple; const MDCSegmentedButton = mdc.segmentedButton.MDCSegmentedButton; const MDCSelect = mdc.select.MDCSelect; const MDCSlider = mdc.slider.MDCSlider; const MDCSnackbar = mdc.snackbar.MDCSnackbar; const MDCSwitch = mdc.switchControl.MDCSwitch; const MDCTabBar = mdc.tabBar.MDCTabBar; const MDCTextField = mdc.textField.MDCTextField; const MDCTooltip = mdc.tooltip.MDCTooltip; const MDCTopAppBar = mdc.topAppBar.MDCTopAppBar;</script>
+    <style>
+        :root {
+            --mdc-theme-primary: #000005;
+        }
+
+        body {
+            background-color: rgb(21, 40, 54);
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        main {
+            color: white;
+        }
+
+        .mdc-tab-bar {
+            background-color: #f5f5f5;
+        }
+
+
+        .logo {
+            width: 200px;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+
+
+        .mdc-image-list--masonry {
+            column-count: 2;
+        }
+
+        #land-info {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: auto;
+            max-height: 85vh;
+            background: white;
+            color: black;
+            padding: 24px;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+            transform: translateY(100%);
+            transition: transform 0.35s ease-in-out, opacity 0.2s ease-in-out;
+            z-index: 1000;
+            overflow-y: auto;
+            opacity: 0;
+        }
+
+
+
+        #land-info.active {
+            transform: translateY(0%);
+            opacity: 1;
+        }
+
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: grabbing;
+            color: #333;
+        }
+
+
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-around;
+            align-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .overlay-content {
+            background: white;
+            color: black;
+            padding: 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .overlay input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="mdc-drawer mdc-drawer--modal">
+        <div class="mdc-drawer__content">
+            <nav class="mdc-list">
+                <div class="title">
+                    <img src="CountryApp.png" class="logo" alt="Logo">
+                </div>
+                <a class="mdc-list-item mdc-list-item--activated" href="index.html" aria-current="page" tabindex="0">
+                    <span class="mdc-list-item__ripple"></span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
+                    <span class="mdc-list-item__text">Home</span>
+                </a>
+                <a class="mdc-list-item" href="bevolking.html">
+                    <span class="mdc-list-item__ripple"></span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">person</i>
+                    <span class="mdc-list-item__text">Bevolking</span>
+                </a>
+                <a class="mdc-list-item" href="hoofdstad.html">
+                    <span class="mdc-list-item__ripple"></span>
+                    <i class="material-icons mdc-list-item__graphic" aria-hidden="true">public</i>
+                    <span class="mdc-list-item__text">Tijdzones</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <div class="mdc-drawer-scrim"></div>
+    <!-- HTML web-elementen -->
+    <header class="mdc-top-app-bar">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button menu"
+                    aria-label="Open navigation">menu</button>
+                <span class="mdtc-top-app-bar__title" onclick="Filter('all')">Home</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+                <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Search"
+                    onclick="zoek()">search</button>
+            </section>
+        </div>
+    </header>
+
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="mdc-tab-bar" role="tablist">
+            <div class="mdc-tab-scroller">
+                <div class="mdc-tab-scroller__scroll-area">
+                    <div class="mdc-tab-scroller__scroll-content">
+                        <button class="mdc-tab mdc-tab" role="tab" aria-selected="true" tabindex="0"
+                            onclick="Filter('vlag')">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">Vlag</span>
+                            </span>
+                            <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab mdc-tab" role="tab" aria-selected="true" tabindex="0"
+                            onclick="Filter('taal')">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">Taal</span>
+                            </span>
+                            <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab mdc-tab" role="tab" aria-selected="true" tabindex="0"
+                            onclick="Filter('regio')">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">Regio</span>
+                            </span>
+                            <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <ul class="mdc-image-list mdc-image-list--masonry" style="padding: 16px;">
+            <div id="data-container-vlag"></div>
+            <div id="data-container-taal"></div>
+            <div id="data-container-regio"></div>
+        </ul>
+
+        <div id="land-info">
+            <button class="close-button" onclick="sluitDetail()">×</button>
+            <h2>Vlag: <span id="info-naam"></span></h2>
+            <p><strong>Taal:</strong> <span id="info-taal"></span></p>
+            <p><strong>Regio:</strong> <span id="info-regio"></span></p>
+            <img id="info-vlag" src="" alt="Vlag" style="width: 200px; margin-top: 10px;">
+        </div>
+
+        <div id="search-overlay" class="overlay hidden">
+            <div class="overlay-content">
+                <button class="close-button" onclick="sluitZoekOverlay()">×</button>
+                <h2>Zoek vlag</h2>
+                <input type="text" id="zoekInput" placeholder="Typ een landnaam..." oninput="zoekVlag()">
+                <div id="zoekResultaten"></div>
+            </div>
+        </div>
+
+
+
+        <!-- Vanaf hier custom Javascript-->
+        <script>
+            // Instantiation
+            const topAppBarElement = document.querySelector('.mdc-top-app-bar');
+            const topAppBar = new MDCTopAppBar(topAppBarElement);
+
+            const drawer = MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
+
+            const listEl = document.querySelector('.mdc-drawer .mdc-list');
+
+
+            listEl.addEventListener('click', (event) => {
+                drawer.open = false;
+            });
+
+            const menuButton = document.querySelector('.menu');
+            menuButton.addEventListener('click', () => {
+                drawer.open = true;
+            });
+
+
+
+
+            // hoe fetch ik een api op?
+            // ik doe dat met een fetch met JSON-response anders werkte die niet anders blijft het een object
+
+            const apiUrl = 'https://restcountries.com/v3.1/all?fields=name,flags,languages,region,flag';
+
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // lege strings om zodadelijk in een foreach loop in te vullen
+                    let vlagHtml = '';
+                    let taalHtml = '';
+                    let regioHtml = '';
+
+                    data.forEach(element => {
+                        // hier haal ik de elementen op van wat ik wil
+                        const vlag = element.flag;
+                        const naam = element.name.common;
+                        const talen = element.languages ? Object.values(element.languages).join(', ') : 'Geen talen bekend';
+                        const regio = element.region
+
+                        //hier laat ik dan de vlag zien
+                        vlagHtml += `
+    <div class="mdc-image-list__item vlag" onclick="toonDetail('${naam}', '${talen}', '${regio}', '${element.flags.png}')">
+        <img src="${element.flags.png}" alt="Vlag van ${naam}" style="width: 170px; height:100px;">
+        <p style="width: 100px; margin-bottom: 20px; font-size: 20px;">${naam}</p>
+    </div>
+`;
+                        //hier laat ik dan de talen zien
+                        taalHtml += `
+                <div class="mdc-image-list__item taal">
+                    <h3>${naam}</h3>
+                    <p>Taal / Talen: ${talen}</p>
+                </div>
+            `;
+                        //hier laat ik dan de regio zien
+                        regioHtml += `
+                <div class="mdc-image-list__item regio">
+                    <h3>${naam}</h3>
+                    <p>Regio: ${regio}</p>
+                </div>
+            `;
+                    });
+
+                    // HOE toon ik de HTML?
+                    // Voeg HTML toe aan containers weer te laten gevengeven aan 3 aparten data container
+                    document.getElementById('data-container-vlag').innerHTML = vlagHtml;
+                    document.getElementById('data-container-taal').innerHTML = taalHtml;
+                    document.getElementById('data-container-regio').innerHTML = regioHtml;
+
+
+                    //waarom deze regel code omdat ik eerst de vlag wil laten zien en niet taal
+                    // Toon standaard alleen vlaggen
+                    Filter('vlag');
+                })
+                .catch(error => console.error('Error:', error));
+            // foutafhandeling als de api opeens niet meer doet
+
+
+            //hoe filteren ik?
+            // Functie om tabbladen te tonen/verbergen
+            function Filter(filter) {
+                document.getElementById('data-container-vlag').style.display = 'none';
+                document.getElementById('data-container-taal').style.display = 'none';
+                document.getElementById('data-container-regio').style.display = 'none';
+
+                //het laat zien wat je wilt zien dus vlag,taal of regio
+                if (filter === 'vlag') {
+                    document.getElementById('data-container-vlag').style.display = 'block';
+                } else if (filter === 'taal') {
+                    document.getElementById('data-container-taal').style.display = 'block';
+                } else if (filter === 'regio') {
+                    document.getElementById('data-container-regio').style.display = 'block';
+                }
+            }
+
+            //functie om detail te laten zien van deze dingen
+            function toonDetail(naam, talen, regio, vlagUrl) {
+                // Vul de gegevens in
+                document.getElementById('info-naam').textContent = naam;
+                document.getElementById('info-taal').textContent = talen;
+                document.getElementById('info-regio').textContent = regio;
+                document.getElementById('info-vlag').src = vlagUrl;
+
+
+                // Toon het detail blok
+                const detailSheet = document.getElementById('land-info');
+                detailSheet.style.display = 'block';
+
+                // Kleine vertraging voor de animatie
+                setTimeout(() => {
+                    detailSheet.classList.add('active');
+                }, 10);
+            }
+
+            // Functie om het detailvenster te sluiten
+            function sluitDetail() {
+                const detailSheet = document.getElementById('land-info');
+
+                // Wacht tot de animatie klaar is voordat we het element verbergen
+                setTimeout(() => {
+                    detailSheet.style.display = 'none';
+                }, 300);
+            }
+
+            //overlay zoekfunctie
+            let landenData = []; // Maak globale variabele voor data
+
+            // Haal landen op bij laden
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    landenData = data;
+                });
+
+            // Zoek overlay openen
+            function zoek() {
+                document.getElementById('search-overlay').classList.remove('hidden');
+            }
+
+            // Zoek overlay sluiten
+            function sluitZoekOverlay() {
+                document.getElementById('search-overlay').classList.add('hidden');
+                document.getElementById('zoekInput').value = '';
+                document.getElementById('zoekResultaten').innerHTML = '';
+            }
+
+            // Zoeken op land
+            function zoekVlag() {
+                // Haal de waarde op uit het zoekveld en maak die lowercase
+                // hoofdletterongevoelig is
+                const input = document.getElementById('zoekInput').value.toLowerCase();
+
+                // Filter de globale landenData op naam
+                // We zoeken of de ingevoerde tekst voorkomt in de landnaam
+                const resultaten = landenData.filter(element =>
+                    element.name.common.toLowerCase().includes(input)
+                );
+
+                // Maak een lege string om HTML in op te bouwen voor de resultaten
+                let zoekHtml = '';
+
+                // Loop door alle gevonden landen heen
+                resultaten.forEach(element => {
+                    // Haal gewenste gegevens uit het object
+                    const naam = element.name.common;
+                    const talen = element.languages ? Object.values(element.languages).join(', ') : 'Geen talen bekend';
+                    const regio = element.region;
+                    const vlagUrl = element.flags.png;
+
+                    // Bouw de HTML op voor elk resultaat
+                    // Bij klikken roep je toonDetail aan om meer info te tonen
+                    zoekHtml += `
+        <div class="mdc-image-list__item vlag" onclick="toonDetail('${naam}', '${talen}', '${regio}', '${vlagUrl}')">
+            <img src="${vlagUrl}" alt="Vlag van ${naam}" style="width: 100px; height: auto;">
+            <p style="font-size: 18px;">${naam}</p>
+        </div>
+        `;
+                });
+
+                // Voeg de HTML toe aan het resultatenvak in de overlay
+                // Hiermee tonen we de gevonden landen
+                document.getElementById('zoekResultaten').innerHTML = zoekHtml;
+            }
+
+
+            // opbouw maken van hoe ik het echt wil verhaal opbouw.
+
+            //doc schrijven van wat ik echt wil voor webdev en laravel
+
+        </script>
+</body>
+
+</html>
